@@ -8,7 +8,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.net.UnknownHostException; 
+import java.net.UnknownHostException;
 
 import common.MessageInfo;
 
@@ -39,48 +39,44 @@ public class UDPClient {
 
 
 		// TO-DO: Construct UDP client class and try to send messages
-		
-		UDPClient client = new UDPClient();
-		client.testLoop(serverAddr, recvPort, countTo);
-		
+
+		UDPClient udp_client = new UDPClient();
+		udp_client.testLoop(serverAddr, recvPort, countTo);
 	}
 
 	public UDPClient() {
 		// TO-DO: Initialise the UDP socket for sending data
-		try {
+		try{
 			sendSoc = new DatagramSocket();
 		}catch(SocketException e){
-			System.out.println("Socket exception: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
 	private void testLoop(InetAddress serverAddr, int recvPort, int countTo) {
 		int				tries = 0;
-		
+
 		// TO-DO: Send the messages to the server
-		for (int i = 0; i < countTo; i++){
-			tries++;
-			MessageInfo msg = new MessageInfo(countTo, tries);
-			send(msg.toString(), serverAddr, recvPort);
+		for (tries = 0; tries < countTo; tries++){
+			MessageInfo mail_info = new MessageInfo(countTo, tries);
+			send(mail_info.toString(), serverAddr, recvPort);
 		}
 	}
 
 	private void send(String payload, InetAddress destAddr, int destPort) {
-		int				payloadSize;
-		byte[]				pktData;
+		int				payloadSize = payload.length();
+		byte[]				pktData = payload.getBytes();
 		DatagramPacket		pkt;
 
+
 		// TO-DO: build the datagram packet and send it to the server
-		payloadSize = payload.length();
-		pktData = payload.getBytes();
+
 		pkt = new DatagramPacket(pktData, payloadSize, destAddr, destPort);
-		
-		try {
+
+		try{
 			sendSoc.send(pkt);
-		} catch (IOException e) {
+		} catch (IOException e){
 			e.printStackTrace();
 		}
-
-		
 	}
 }
