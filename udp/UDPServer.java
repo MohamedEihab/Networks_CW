@@ -20,7 +20,7 @@ public class UDPServer {
 	private boolean close;
 
 	private void run() {
-		int				pacSize = 20480; // Try different sizes?
+		int				pacSize = 2048; // Try different sizes?
 		byte[]			pacData = new byte[pacSize];
 		DatagramPacket 	pac;
 
@@ -76,7 +76,7 @@ public class UDPServer {
 		totalMessages++;
 		if (msg.messageNum % 100 == 0 ){
 			System.out.println(msg.messageNum);
-	}
+		}
 		receivedMessages[msg.messageNum] = 1;
 		// TO-DO: If this is the last expected message, then identify
 		//        any missing messages
