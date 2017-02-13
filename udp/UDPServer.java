@@ -38,12 +38,13 @@ public class UDPServer {
 				pac = new DatagramPacket(pacData, pacSize);
 
 				try {
-					recvSoc.setSoTimeout(45000); //45 seconds
+					recvSoc.setSoTimeout(30000); //45 seconds
 					recvSoc.receive(pac);
 					String pac_message = new String(pac.getData());
 					processMessage(pac_message);
 				}catch(SocketTimeoutException e){
-					e.printStackTrace();
+					printObservation();
+					System.out.println("Socket Timeout");
 				}
 			}
 
@@ -81,31 +82,34 @@ public class UDPServer {
 		//        any missing messages
 
 		if (totalMessages == msg.totalMessages){
-
-			int lost_messages = 0;
-			// If there are no messages to begin with, exit
-			if (receivedMessages == null){
-				return;
-			}
-
-			for (int i = 0; i < receivedMessages.length; i++){
-				if (receivedMessages[i] != 1){ //missing if the message is not equal to one?
-					System.out.println("Message: " + i + " is missing.");
-					lost_messages++;
-				}
-			}
-
-			System.out.println("Number of successful message arrivals: " + (totalMessages - lost_messages));
-			if (lost_messages > 0){
-				System.out.println(lost_messages + " messages have been lost.");
-			}else{
-				System.out.println("100% of messages arrived.");
-			}
-
-			receivedMessages = null; //CHECK ABOUT THIS
-			totalMessages = -1;
+			printObservation();
 		}
 
+	}
+
+	public void printObservation(){
+		int lost_messages = 0;
+		// If there are no messages to begin with, exit
+		if (receivedMessages == null){
+			return;
+		}
+
+		for (int i = 0; i < receivedMessages.length; i++){
+			if (receivedMessages[i] != 1){ //missing if the message is not equal to one?
+				System.out.println("Message: " + i + " is missing.");
+				lost_messages++;
+			}
+		}
+
+		System.out.println("Number of successful message arrivals: " + (totalMessages - lost_messages));
+		if (lost_messages > 0){
+			System.out.println(lost_messages + " messages have been lost.");
+		}else{
+			System.out.println("100% of messages arrived.");
+		}
+
+		receivedMessages = null; //CHECK ABOUT THIS
+		totalMessages = -1;
 	}
 
 
