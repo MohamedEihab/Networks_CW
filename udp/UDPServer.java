@@ -38,7 +38,7 @@ public class UDPServer {
 				pac = new DatagramPacket(pacData, pacSize);
 
 				try {
-					recvSoc.setSoTimeout(450000); //45 seconds
+					recvSoc.setSoTimeout(45000); //45 seconds
 					recvSoc.receive(pac);
 					String pac_message = new String(pac.getData());
 					processMessage(pac_message);
@@ -66,7 +66,7 @@ public class UDPServer {
 			e.printStackTrace();
 		}
 		// TO-DO: On receipt of first message, initialise the receive buffer
-		 if (receivedMessages == null){
+		 if ((receivedMessages == null)||(msg.totalMessages != receivedMessages.length)){
 			 receivedMessages = new int[msg.totalMessages];
 			 totalMessages = 0;
 		 }
@@ -95,7 +95,7 @@ public class UDPServer {
 				}
 			}
 
-			System.out.println("Number of successful message arrivals: " + totalMessages);
+			System.out.println("Number of successful message arrivals: " + (totalMessages - lost_messages));
 			if (lost_messages > 0){
 				System.out.println(lost_messages + " messages have been lost.");
 			}else{

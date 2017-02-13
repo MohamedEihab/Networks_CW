@@ -10,4 +10,5 @@ import common.*;
 
 public interface RMIServerI extends Remote {
 	public void receiveMessage(MessageInfo msg) throws RemoteException;
+	 public String helloTo(String name) throws RemoteException;
 }
