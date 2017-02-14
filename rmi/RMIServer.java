@@ -2,7 +2,8 @@
  * Created on 01-Mar-2016
  */
 package rmi;
- 
+
+import java.rmi.registry.Registry;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.registry.LocateRegistry;
@@ -73,12 +74,19 @@ public class RMIServer extends UnicastRemoteObject implements RMIServerI {
         //    System.setSecurityManager(new RMISecurityManager());
         //}
 
-        System.setProperty("java.rmi.server.hostname","127.0.0.1");            
+        //System.setProperty("java.rmi.server.hostname","155.198.115.132");            
             
         try{
-
-            Naming.rebind("mostafa", new RMIServer());
-            System.err.println("Server Ready");
+		rmis = new RMIServer();
+		Registry registry;
+         //   Naming.rebind("mostafa", rmis);
+		try{
+		registry = LocateRegistry.createRegistry(8090);
+		}catch(RemoteException e){
+		registry = LocateRegistry.getRegistry();
+		}
+		registry.bind("Mostafa",rmis);
+            //System.err.println("Server Ready");
         }catch(Exception e){
             System.err.println("Server Exception: " + e.toString());
             e.printStackTrace();

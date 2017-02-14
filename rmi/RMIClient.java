@@ -4,6 +4,7 @@
 package rmi;
  
 import java.rmi.Naming;
+import java.rmi.registry.*;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.net.MalformedURLException;
@@ -25,14 +26,16 @@ public class RMIClient {
         String urlServer = new String("rmi://" + args[0] + "/RMIServer");
         int numMessages = Integer.parseInt(args[1]);
 	MessageInfo message;
-        iRMIServer = (RMIServerI) Naming.lookup("//localhost/MyServer");
-        String name = "mostafa";
+        //iRMIServer = (RMIServerI) Naming.lookup(urlServer);
+        //String name = "mostafa";
 
-        String response = iRMIServer.helloTo(name);
+       // String response = iRMIServer.helloTo(name);
 
-        System.out.println(response);
+       // System.out.println(response);
 
-        
+
+	Registry reg = LocateRegistry.getRegistry(args[0], 8090);
+        iRMIServer = (RMIServerI) reg.lookup("Mostafa");
  
         // TO-DO: Initialise Security Manager
  
