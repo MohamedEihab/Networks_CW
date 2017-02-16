@@ -1,6 +1,3 @@
-/*
- * Created on 01-Mar-2016
- */
 package udp;
 
 import java.io.IOException;
@@ -59,24 +56,23 @@ public class UDPClient {
 		// TO-DO: Send the messages to the server
 		for (tries = 0; tries < countTo; tries++){
 			MessageInfo mail_info = new MessageInfo(countTo, tries);
-			send(mail_info.toString(), serverAddr, recvPort);
+			try{
+				send(mail_info.toString(), serverAddr, recvPort);
+			} catch (IOException e){
+				e.printStackTrace();
+			}
 		}
 	}
 
-	private void send(String payload, InetAddress destAddr, int destPort) {
+	private void send(String payload, InetAddress destAddr, int destPort) throws IOException {
 		int				payloadSize = payload.length();
 		byte[]				pktData = payload.getBytes();
 		DatagramPacket		pkt;
 
-
 		// TO-DO: build the datagram packet and send it to the server
 
 		pkt = new DatagramPacket(pktData, payloadSize, destAddr, destPort);
+		sendSoc.send(pkt);
 
-		try{
-			sendSoc.send(pkt);
-		} catch (IOException e){
-			e.printStackTrace();
-		}
 	}
 }
