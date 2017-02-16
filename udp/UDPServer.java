@@ -18,21 +18,19 @@ public class UDPServer {
 
 	private void run() throws SocketException, IOException{
 		int				pacSize = 2048; // Try different sizes?
-		byte[]			pacData = new byte[pacSize];
+		byte[]			pacData;
 		DatagramPacket 	pac;
 		// TO-DO: Receive the messages and process them by calling processMessage(...).
 		//        Use a timeout (e.g. 30 secs) to ensure the program doesn't block forever
 		close = false;
 		while (!close){
 
-			for (int n = 0; n < pacSize; n++){
-				pacData[n] = 0;
-			}
+			pacData = new byte[pacSize];
 
 			pac = new DatagramPacket(pacData, pacSize);
 
 			try {
-				recvSoc.setSoTimeout(30000); //45 seconds
+				recvSoc.setSoTimeout(45000); //45 seconds
 				recvSoc.receive(pac);
 				String pac_message = new String(pac.getData());
 				try{
@@ -41,7 +39,28 @@ public class UDPServer {
 					e.printStackTrace();
 				}
 			}catch(SocketTimeoutException e){
-				printObservation();
+				int lost_messages = 0;
+				// If there are no messages to begin with, exit
+				if (receivedMessages == null){
+					return;
+				}
+
+				for (int i = 0; i < receivedMessages.length; i++){
+					if (receivedMessages[i] != 1){ //missing if the message is not equal to one?
+						System.out.println("Message: " + i + " is missing.");
+						lost_messages++;
+					}
+				}
+
+				System.out.println("Number of successful message arrivals: " + (totalMessages - lost_messages));
+				if (lost_messages > 0){
+					System.out.println(lost_messages + " messages have been lost.");
+				}else{
+					System.out.println("100% of messages arrived.");
+				}
+
+				receivedMessages = null;
+				totalMessages = -1;
 				System.out.println("Socket Timeout");
 				close = true;
 			}
@@ -73,37 +92,32 @@ public class UDPServer {
 		//        any missing messages
 
 		if (totalMessages == msg.totalMessages){
-			printObservation();
-		}
-
-
-	}
-
-	public void printObservation(){
-		int lost_messages = 0;
-		// If there are no messages to begin with, exit
-		if (receivedMessages == null){
-			return;
-		}
-
-		for (int i = 0; i < receivedMessages.length; i++){
-			if (receivedMessages[i] != 1){ //missing if the message is not equal to one?
-				System.out.println("Message: " + i + " is missing.");
-				lost_messages++;
+			int lost_messages = 0;
+			// If there are no messages to begin with, exit
+			if (receivedMessages == null){
+				return;
 			}
+
+			for (int i = 0; i < receivedMessages.length; i++){
+				if (receivedMessages[i] != 1){ //missing if the message is not equal to one?
+					System.out.println("Message: " + i + " is missing.");
+					lost_messages++;
+				}
+			}
+
+			System.out.println("Number of successful message arrivals: " + (totalMessages - lost_messages));
+			if (lost_messages > 0){
+				System.out.println(lost_messages + " messages have been lost.");
+			}else{
+				System.out.println("100% of messages arrived.");
+			}
+
+			receivedMessages = null;
+			totalMessages = -1;
 		}
 
-		System.out.println("Number of successful message arrivals: " + (totalMessages - lost_messages));
-		if (lost_messages > 0){
-			System.out.println(lost_messages + " messages have been lost.");
-		}else{
-			System.out.println("100% of messages arrived.");
-		}
 
-		receivedMessages = null;
-		totalMessages = -1;
 	}
-
 
 	public UDPServer(int rp) {
 		// TO-DO: Initialise UDP socket for receiving data
